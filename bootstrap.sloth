@@ -1,15 +1,15 @@
 #!/usr/bin/env sloth
 
+let remotePath = 'https://github.com/juce-framework/JUCE'
+let localPath = "${$scriptDir}/ignore/JUCE"
+let release = '8.0.10' # Sep 15 2025
+
 do {
   let os = ('uname'&!).stdout.trim()
   if os != 'Linux' {
     throw "This script assumes Linux, got \"${os}\""
   }
 }
-
-let remotePath = 'https://github.com/juce-framework/JUCE'
-let localPath = "${$scriptDir}/ignore/JUCE"
-let release = '8.0.10' # Sep 15 2025
 
 func ensureJuceCheckedOut() {
   if not Directory(localPath).exists() {
@@ -21,7 +21,12 @@ func buildJuce() {
   let target = 'DemoRunner'
   with ($cwd = localPath) {
     if not File("./cmake-build/CMakeCache.txt").exists() {
-      'cmake . -B cmake-build -DJUCE_BUILD_EXAMPLES=ON -DJUCE_BUILD_EXTRAS=ON'!
+      ['cmake', '.',
+        '-B', 'cmake-build',
+        '-DJUCE_BUILD_EXAMPLES=ON',
+        '-DJUCE_BUILD_EXTRAS=ON',
+        '-DJUCE_WEB_BROWSER=0',
+      ]!
     }
     "cmake --build cmake-build --target ${target}"!
     "cmake --build cmake-build --target Projucer"!
