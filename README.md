@@ -6,5 +6,11 @@ On Ubuntu:
 
 ```bash
 apt install \
-    libcurl4-openssl-dev
+    libcurl4-openssl-dev \
+    ladspa
 ```
+=======
+## Setup
+
+`~/JUCE`
+`~/JUCE/modules`
