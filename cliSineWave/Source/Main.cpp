@@ -1,5 +1,7 @@
 #include <JuceHeader.h>
 
+#include "pitches.h"
+
 using namespace juce;
 
 // TODO figure out assertions in
@@ -26,6 +28,16 @@ int main(void) {
                         device->getCurrentSampleRate());
   auto player = std::make_unique<AudioSourcePlayer>();
   player->setSource(source.get());
+  source->setAmplitude(0.5);
+  source->setFrequency(Pitches::A4);
+  const auto sleep = 200;
+
   devmgr.addAudioCallback(player.get());
-  Thread::sleep(600);
+  Thread::sleep(sleep);
+  source->setFrequency(Pitches::C5);
+  Thread::sleep(sleep);
+  source->setFrequency(Pitches::E5);
+  Thread::sleep(sleep);
+  source->setFrequency(Pitches::G5);
+  Thread::sleep(sleep);
 }
