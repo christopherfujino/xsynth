@@ -6,13 +6,14 @@
   ==============================================================================
 */
 
-#include "../JuceLibraryCode/JuceHeader.h"
-#include <stdio.h>
+#include <JuceHeader.h>
 
 //==============================================================================
-int main(int argc, char *argv[]) {
-  printf("Your project name: %s\n", ProjectInfo::projectName);
-  // ..your code goes here!
+int main (int argc, char* argv[])
+{
 
-  return 42;
+    // ..your code goes here!
+
+
+    return 0;
 }
