@@ -1,0 +1,11 @@
+#!/usr/bin/env sloth
+
+let out = Directory("${$scriptDir}/Builds/CMake")
+
+if not out.exists() {
+  out.create()
+}
+
+with($cwd = out.path) {
+  [ 'cmake', '../..' ]!
+}
