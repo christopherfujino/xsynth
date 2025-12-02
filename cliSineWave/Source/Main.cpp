@@ -5,7 +5,6 @@ using namespace juce;
 // TODO figure out assertions in
 // JUCE Assertion failure in juce_MidiDeviceListConnectionBroadcaster.cpp:48
 // JUCE Assertion failure in juce_AsyncUpdater.cpp:78
-// JUCE Assertion failure in juce_MidiDeviceListConnectionBroadcaster.cpp:54
 //
 // To do with JUCE_ASSERT_MESSAGE_THREAD
 
