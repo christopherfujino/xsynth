@@ -1,12 +1,27 @@
 #include <JuceHeader.h>
 
-class App : public juce::JUCEApplication {
-public:
-  virtual const juce::String getApplicationName() { return "cli-xsynth"; }
-  virtual const juce::String getApplicationVersion() { return "0.1"; }
+using namespace juce;
 
-  virtual void initialise(const juce::String &commandLineParameters) {}
-  virtual void shutdown() {}
-};
+AudioDeviceManager devmgr;
+AudioFormatManager fmgr;
 
-START_JUCE_APPLICATION(App)
+int main(void) {
+  fmgr.registerBasicFormats();
+  ScopedPointer<ToneGeneratorAudioSource> source =
+      new ToneGeneratorAudioSource();
+
+  // 0 in, 2 out
+  devmgr.initialiseWithDefaultDevices(0, 2);
+  AudioIODevice *device = devmgr.getCurrentAudioDevice();
+  if (device && source) {
+    source->prepareToPlay(device->getDefaultBufferSize(),
+                          device->getCurrentSampleRate());
+    ScopedPointer<AudioSourcePlayer> player = new AudioSourcePlayer();
+    player->setSource(source);
+    devmgr.addAudioCallback(player);
+    Thread::sleep(1000);
+    source->releaseResources();
+    return 0;
+  }
+  return -1;
+}
