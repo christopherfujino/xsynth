@@ -14,8 +14,7 @@ int main(void) {
   AudioFormatManager fmgr;
 
   fmgr.registerBasicFormats();
-  ScopedPointer<ToneGeneratorAudioSource> source =
-      new ToneGeneratorAudioSource();
+  auto source = std::make_unique<ToneGeneratorAudioSource>();
 
   // 0 in, 2 out
   devmgr.initialiseWithDefaultDevices(0, 2);
@@ -26,12 +25,8 @@ int main(void) {
 
   source->prepareToPlay(device->getDefaultBufferSize(),
                         device->getCurrentSampleRate());
-  ScopedPointer<AudioSourcePlayer> player = new AudioSourcePlayer();
-  player->setSource(source);
-  devmgr.addAudioCallback(player);
-  Thread::sleep(1000);
-
-  source->releaseResources();
-  devmgr.closeAudioDevice();
-  fmgr.end();
+  auto player = std::make_unique<AudioSourcePlayer>();
+  player->setSource(source.get());
+  devmgr.addAudioCallback(player.get());
+  Thread::sleep(600);
 }
