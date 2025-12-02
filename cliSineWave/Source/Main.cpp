@@ -29,15 +29,15 @@ int main(void) {
   auto player = std::make_unique<AudioSourcePlayer>();
   player->setSource(source.get());
   source->setAmplitude(0.5);
-  source->setFrequency(Pitches::A4);
+  source->setFrequency(Pitches::nameA4);
   const auto sleep = 200;
 
   devmgr.addAudioCallback(player.get());
   Thread::sleep(sleep);
-  source->setFrequency(Pitches::C5);
+  source->setFrequency(Pitches::nameC5);
   Thread::sleep(sleep);
-  source->setFrequency(Pitches::E5);
+  source->setFrequency(Pitches::nameE5);
   Thread::sleep(sleep);
-  source->setFrequency(Pitches::G5);
+  source->setFrequency(Pitches::nameG5);
   Thread::sleep(sleep);
 }
