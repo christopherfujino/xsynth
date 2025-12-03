@@ -1,5 +1,6 @@
 #!/usr/bin/env sloth
 
+let debug = true
 let out = Directory("${$scriptDir}/out")
 
 if not out.exists() {
@@ -7,5 +8,6 @@ if not out.exists() {
 }
 
 with($cwd = out.path) {
-  [ 'cmake', $scriptDir ]!
+  let releaseVar = if debug {'Debug'} else {'Release'}
+  [ 'cmake', $scriptDir, "-DCMAKE_BUILD_TYPE=${releaseVar}" ]!
 }
