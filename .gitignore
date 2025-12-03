@@ -400,3 +400,5 @@ FodyWeavers.xsd
 # Custom
 a.out
 *.o
+
+ignore/
