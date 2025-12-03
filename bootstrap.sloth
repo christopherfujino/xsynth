@@ -7,29 +7,33 @@ do {
   }
 }
 
-function juceFramework() {
+func juceFramework() {
+  let buildProjucer = false
   let remotePath = 'https://github.com/juce-framework/JUCE'
   let localPath = "${$scriptDir}/ignore/JUCE"
   let release = '8.0.10' # Sep 15 2025
 
   if not Directory(localPath).exists() {
-    [ 'git', 'clone', remotePath, '-b', release, localPath ]!
+    [ 'git', 'clone', remotePath, '-b', release, '--depth=1', localPath ]!
   }
 
-  with ($cwd = juceRoot) {
-    if not File("${juceRoot}/cmake-build/CMakeCache.txt").exists() {
-      ['cmake', '.',
-        '-B', 'cmake-build',
-        '-DJUCE_BUILD_EXAMPLES=ON',
-        '-DJUCE_BUILD_EXTRAS=ON',
-        #"-DCMAKE_INSTALL_PREFIX=${installDir}",
-        '-DJUCE_WEB_BROWSER=0',
-      ]!
+  if buildProjucer {
+    let juceOut = Directory("${localPath}/cmake-build")
+    with ($cwd = localPath) {
+      if not juceOut.exists() {  }
+        ['cmake', '.',
+          '-B', juceOut.path,
+          '-DJUCE_BUILD_EXAMPLES=ON',
+          '-DJUCE_BUILD_EXTRAS=ON',
+          #"-DCMAKE_INSTALL_PREFIX=${installDir}",
+          '-DJUCE_WEB_BROWSER=0',
+        ]!
+      }
+
+      "cmake --build ${juceOut.path} --target Projucer"!
     }
-
-    'cmake --build cmake-build --target DemoRunner'!
-    'cmake --build cmake-build --target Projucer'!
   }
+
 }
 
 juceFramework()
