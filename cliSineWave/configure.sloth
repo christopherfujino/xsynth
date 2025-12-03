@@ -1,11 +1,11 @@
 #!/usr/bin/env sloth
 
-let out = Directory("${$scriptDir}/Builds/CMake")
+let out = Directory("${$scriptDir}/out")
 
 if not out.exists() {
   out.create()
 }
 
 with($cwd = out.path) {
-  [ 'cmake', '../..' ]!
+  [ 'cmake', $scriptDir ]!
 }

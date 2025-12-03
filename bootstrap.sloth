@@ -1,5 +1,7 @@
 #!/usr/bin/env sloth
 
+let buildProjucer = false
+
 do {
   let os = ('uname'&!).stdout.trim()
   if os != 'Linux' {
@@ -8,7 +10,6 @@ do {
 }
 
 func juceFramework() {
-  let buildProjucer = false
   let remotePath = 'https://github.com/juce-framework/JUCE'
   let localPath = "${$scriptDir}/ignore/JUCE"
   let release = '8.0.10' # Sep 15 2025
@@ -20,7 +21,7 @@ func juceFramework() {
   if buildProjucer {
     let juceOut = Directory("${localPath}/cmake-build")
     with ($cwd = localPath) {
-      if not juceOut.exists() {  }
+      if not juceOut.exists() {
         ['cmake', '.',
           '-B', juceOut.path,
           '-DJUCE_BUILD_EXAMPLES=ON',

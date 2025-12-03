@@ -1,50 +1,32 @@
 cmake_minimum_required(VERSION 4.0)
 
-project(xsynth-cli
-  # Some JUCE module libs require C
-  LANGUAGES C CXX
-  # JUCEUtils.cmake requires a version
+project(xsynth-cmake-no-projucer
+  LANGUAGES CXX
   VERSION 0.1)
 
-# Generate compile_commands.json
+# Generate a compile_commands.json file
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(
-  # source
-  ../ignorez/JUCE
-  # binary out
-  ../ignorez/JUCE/cmake-build
-  # Don't include these targets when building "ALL"
+  # This is relative to CMakeLists.txt
+  ../ignore/JUCE
+  # This is relative to build dir
+  JUCE/cmake-build
+  # Do not include these targets to ALL target
   EXCLUDE_FROM_ALL)
 
-juce_add_console_app(main
-  PRODUCT_NAME "xsynth-cli binary")
+juce_add_console_app(main)
 
-target_sources(main PRIVATE
-  Source/Main.cpp)
+target_sources(main PRIVATE main.cpp)
 
 juce_generate_juce_header(main)
 
-target_compile_definitions(main PRIVATE
-  JUCE_WEB_BROWSER=0
-  JUCE_USE_CURL=0)
+target_compile_definitions(main PRIVATE JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0)
 
 target_link_libraries(main PRIVATE
+  juce::juce_core
   juce::juce_audio_devices
   juce::juce_audio_formats
-
-  # transitive
-  #juce::juce_audio_basics
-  #juce::juce_audio_processors
-  #juce::juce_core
-  #juce::juce_events
-
-  # Needed?
-  #juce::juce_audio_utils
-  #juce::juce_data_structures
-  #juce::juce_graphics
-  #juce::juce_gui_basics
-  #juce::juce_gui_extra
 
   PUBLIC
   juce::juce_recommended_config_flags

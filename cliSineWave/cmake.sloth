@@ -1,5 +1,5 @@
 #!/usr/bin/env sloth
 
 with($cwd = $scriptDir) {
-  'cmake --build ./Builds/CMake'!
+  'cmake --build ./out'!
 }
