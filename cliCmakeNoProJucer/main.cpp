@@ -1,4 +1,5 @@
 #include <JuceHeader.h>
+#include "pitches.h"
 
 using namespace juce;
 
@@ -21,9 +22,11 @@ int main() {
   auto player = std::make_unique<AudioSourcePlayer>();
   player->setSource(source.get());
   source->setAmplitude(0.5);
-  source->setFrequency(440);
+  source->setFrequency(Pitches::nameA4);
   const auto sleep = 200;
 
   devmgr.addAudioCallback(player.get());
+  Thread::sleep(sleep);
+  source->setFrequency(Pitches::nameC5);
   Thread::sleep(sleep);
 }
