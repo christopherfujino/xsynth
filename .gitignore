@@ -402,3 +402,4 @@ a.out
 *.o
 
 ignore/
+out/

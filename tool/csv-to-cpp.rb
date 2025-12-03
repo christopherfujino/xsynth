@@ -2,7 +2,10 @@
 
 require 'csv'
 
-write_fd = File.open('./pitches.h', 'w')
+# Ensure cwd is //tool
+Dir.chdir __dir__
+
+write_fd = File.open('../common/pitches.h', 'w')
 
 write_fd.write "// Generated from //tool/csv-to-cpp.rb\n\n"
 write_fd.write "#pragma once\n\n"

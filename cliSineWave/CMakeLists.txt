@@ -9,12 +9,11 @@ project(xsynth-cli
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# If JUCE is installed on system, we'd use find_package(JUCE REQUIRED)
 add_subdirectory(
   # source
-  ../ignore/JUCE
+  ../ignorez/JUCE
   # binary out
-  ../ignore/JUCE/cmake-build
+  ../ignorez/JUCE/cmake-build
   # Don't include these targets when building "ALL"
   EXCLUDE_FROM_ALL)
 

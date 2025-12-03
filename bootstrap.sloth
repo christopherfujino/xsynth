@@ -1,10 +1,5 @@
 #!/usr/bin/env sloth
 
-let remotePath = 'https://github.com/juce-framework/JUCE'
-let localPath = "${$scriptDir}/ignore/JUCE"
-let release = '8.0.10' # Sep 15 2025
-let installDir = "${$scriptDir}/ignore/install"
-
 do {
   let os = ('uname'&!).stdout.trim()
   if os != 'Linux' {
@@ -12,23 +7,30 @@ do {
   }
 }
 
-if not Directory(localPath).exists() {
-  [ 'git', 'clone', remotePath, '-b', release, localPath ]!
-}
+function juceFramework() {
+  let remotePath = 'https://github.com/juce-framework/JUCE'
+  let localPath = "${$scriptDir}/ignore/JUCE"
+  let release = '8.0.10' # Sep 15 2025
 
-with ($cwd = juceRoot) {
-  if not File("${juceRoot}/cmake-build/CMakeCache.txt").exists() {
-    ['cmake', '.',
-      '-B', 'cmake-build',
-      '-DJUCE_BUILD_EXAMPLES=ON',
-      '-DJUCE_BUILD_EXTRAS=ON',
-      "-DCMAKE_INSTALL_PREFIX=${installDir}",
-      '-DJUCE_WEB_BROWSER=0',
-    ]!
+  if not Directory(localPath).exists() {
+    [ 'git', 'clone', remotePath, '-b', release, localPath ]!
   }
 
-  'cmake --build cmake-build --target DemoRunner'!
-  'cmake --build cmake-build --target Projucer'!
+  with ($cwd = juceRoot) {
+    if not File("${juceRoot}/cmake-build/CMakeCache.txt").exists() {
+      ['cmake', '.',
+        '-B', 'cmake-build',
+        '-DJUCE_BUILD_EXAMPLES=ON',
+        '-DJUCE_BUILD_EXTRAS=ON',
+        #"-DCMAKE_INSTALL_PREFIX=${installDir}",
+        '-DJUCE_WEB_BROWSER=0',
+      ]!
+    }
 
-  'cmake --build cmake-build --target install'!
+    'cmake --build cmake-build --target DemoRunner'!
+    'cmake --build cmake-build --target Projucer'!
+  }
 }
+
+juceFramework()
+'./tool/csv-to-cpp.rb'!
