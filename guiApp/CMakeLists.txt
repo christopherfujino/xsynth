@@ -1,31 +1,6 @@
-A cross-platform software synthesizer.
-
-## Building
-
-On Ubuntu:
-
-```bash
-apt install \
-    libcurl4-openssl-dev \
-    ladspa
-```
-
-## Setup
-
-The following paths are actually source directories:
-
-`~/JUCE`
-`~/JUCE/modules`
-
-## Development
-
-The following CMake scaffold will allow bootstrapping a new JUCE project:
-
-```cmake
 cmake_minimum_required(VERSION 4.0)
 
-project(xsynth-cmake-no-projucer
-  # Some JUCE modules require C
+project(guiApp
   LANGUAGES C CXX
   VERSION 0.1)
 
@@ -41,7 +16,7 @@ add_subdirectory(
   # Do not include these targets to ALL target
   EXCLUDE_FROM_ALL)
 
-juce_add_console_app(main)
+juce_add_gui_app(main)
 
 target_sources(main PRIVATE main.cpp)
 
@@ -54,7 +29,12 @@ target_link_libraries(main PRIVATE
   juce::juce_audio_devices
   juce::juce_audio_formats
 
+  juce::juce_graphics
+  juce::juce_gui_basics
+
+  # ? juce_data_structures
+  # ? juce_events
+
   PUBLIC
   juce::juce_recommended_config_flags
   juce::juce_recommended_warning_flags)
-```
