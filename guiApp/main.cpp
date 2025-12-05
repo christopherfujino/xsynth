@@ -1,59 +1,122 @@
 #include <JuceHeader.h>
 
-class MainComponent final : public Component {
+class AudioAppDemo final : public AudioAppComponent {
 public:
   //==============================================================================
-  MainComponent() {
-    addAndMakeVisible(helloWorldLabel);
+  AudioAppDemo()
+#ifdef JUCE_DEMO_RUNNER
+      : AudioAppComponent(getSharedAudioDeviceManager(0, 2))
+#endif
+  {
+    setAudioChannels(0, 2);
 
-    helloWorldLabel.setFont(FontOptions(40.00f, Font::bold));
-    helloWorldLabel.setJustificationType(Justification::centred);
-    helloWorldLabel.setEditable(false, false, false);
-    helloWorldLabel.setColour(Label::textColourId, Colours::black);
-    helloWorldLabel.setColour(TextEditor::textColourId, Colours::black);
-    helloWorldLabel.setColour(TextEditor::backgroundColourId,
-                              Colour(0x00000000));
+    setSize(800, 600);
+  }
 
-    addAndMakeVisible(quitButton);
-    quitButton.onClick = [] { JUCEApplication::quit(); };
+  ~AudioAppDemo() override { shutdownAudio(); }
 
-    setSize(600, 300);
+  //==============================================================================
+  void prepareToPlay(int samplesPerBlockExpected,
+                     double newSampleRate) override {
+    sampleRate = newSampleRate;
+    expectedSamplesPerBlock = samplesPerBlockExpected;
+  }
+
+  /*  This method generates the actual audio samples.
+      In this example the buffer is filled with a sine wave whose frequency and
+      amplitude are controlled by the mouse position.
+   */
+  void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) override {
+    bufferToFill.clearActiveBufferRegion();
+    auto originalPhase = phase;
+
+    for (int chan = 0; chan < bufferToFill.buffer->getNumChannels(); ++chan) {
+      phase = originalPhase;
+
+      float *channelData =
+          bufferToFill.buffer->getWritePointer(chan, bufferToFill.startSample);
+
+      for (int i = 0; i < bufferToFill.numSamples; ++i) {
+        channelData[i] = amplitude * std::sin(phase);
+
+        // increment the phase step for the next sample
+        phase = std::fmod(phase + phaseDelta, MathConstants<float>::twoPi);
+      }
+    }
+  }
+
+  void releaseResources() override {
+    // This gets automatically called when audio device parameters change
+    // or device is restarted.
   }
 
   //==============================================================================
   void paint(Graphics &g) override {
-    g.fillAll(Colour(0xffc1d0ff));
+    // (Our component is opaque, so we must completely fill the background with
+    // a solid colour)
+    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
-    g.setColour(Colours::white);
-    g.fillPath(internalPath);
+    float centreY = (float)getHeight() / 2.0f;
+    float radius = amplitude * 200.0f;
 
-    g.setColour(Colour(0xff6f6f6f));
-    g.strokePath(internalPath, PathStrokeType(5.200f));
+    if (radius >= 0.0f) {
+      // Draw an ellipse based on the mouse position and audio volume
+      g.setColour(Colours::lightgreen);
+
+      g.fillEllipse(jmax(0.0f, lastMousePosition.x) - radius / 2.0f,
+                    jmax(0.0f, lastMousePosition.y) - radius / 2.0f, radius,
+                    radius);
+    }
+
+    // Draw a representative sine wave.
+    Path wavePath;
+    wavePath.startNewSubPath(0, centreY);
+
+    for (auto x = 1.0f; x < (float)getWidth(); ++x)
+      wavePath.lineTo(x, centreY + amplitude * (float)getHeight() * 2.0f *
+                                       std::sin(x * frequency * 0.0001f));
+
+    g.setColour(getLookAndFeel().findColour(Slider::thumbColourId));
+    g.strokePath(wavePath, PathStrokeType(2.0f));
+  }
+
+  // Mouse handling..
+  void mouseDown(const MouseEvent &e) override { mouseDrag(e); }
+
+  void mouseDrag(const MouseEvent &e) override {
+    lastMousePosition = e.position;
+
+    frequency = (float)(getHeight() - e.y) * 10.0f;
+    amplitude = jmin(0.9f, 0.2f * e.position.x / (float)getWidth());
+
+    phaseDelta = (float)(MathConstants<double>::twoPi * frequency / sampleRate);
+
+    repaint();
+  }
+
+  void mouseUp(const MouseEvent &) override {
+    amplitude = 0.0f;
+    repaint();
   }
 
   void resized() override {
-    helloWorldLabel.setBounds(152, 80, 296, 48);
-    quitButton.setBounds(getWidth() - 176, getHeight() - 60, 120, 32);
-
-    internalPath.clear();
-    internalPath.startNewSubPath(136.0f, 80.0f);
-    internalPath.quadraticTo(176.0f, 24.0f, 328.0f, 32.0f);
-    internalPath.quadraticTo(472.0f, 40.0f, 472.0f, 104.0f);
-    internalPath.quadraticTo(472.0f, 192.0f, 232.0f, 176.0f);
-    internalPath.lineTo(184.0f, 216.0f);
-    internalPath.lineTo(200.0f, 168.0f);
-    internalPath.quadraticTo(96.0f, 136.0f, 136.0f, 80.0f);
-    internalPath.closeSubPath();
+    // This is called when the component is resized.
+    // If you add any child components, this is where you should
+    // update their positions.
   }
 
 private:
   //==============================================================================
-  Label helloWorldLabel{{}, TRANS("Hello World!")};
-  TextButton quitButton{TRANS("Quit")};
-  Path internalPath;
+  float phase = 0.0f;
+  float phaseDelta = 0.0f;
+  float frequency = 5000.0f;
+  float amplitude = 0.2f;
 
-  //==============================================================================
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
+  double sampleRate = 0.0;
+  int expectedSamplesPerBlock = 0;
+  Point<float> lastMousePosition;
+
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioAppDemo)
 };
 
 class App : public JUCEApplication {
@@ -102,7 +165,7 @@ public:
                   ResizableWindow::backgroundColourId),
               DocumentWindow::allButtons) {
       setUsingNativeTitleBar(true);
-      setContentOwned(new MainComponent(), true);
+      setContentOwned(new AudioAppDemo(), true);
       setResizable(true, true);
       centreWithSize(getWidth(), getHeight());
       setVisible(true);

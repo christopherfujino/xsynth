@@ -28,6 +28,7 @@ target_link_libraries(main PRIVATE
   juce::juce_core
   juce::juce_audio_devices
   juce::juce_audio_formats
+  juce::juce_audio_utils # AudioAppComponent
 
   juce::juce_graphics
   juce::juce_gui_basics
