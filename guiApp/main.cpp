@@ -9,13 +9,11 @@ public:
 #endif
   {
     setAudioChannels(0, 2);
-
     setSize(800, 600);
   }
 
   ~AudioAppDemo() override { shutdownAudio(); }
 
-  //==============================================================================
   void prepareToPlay(int samplesPerBlockExpected,
                      double newSampleRate) override {
     sampleRate = newSampleRate;
@@ -50,13 +48,9 @@ public:
     // or device is restarted.
   }
 
-  //==============================================================================
   void paint(Graphics &g) override {
-    // (Our component is opaque, so we must completely fill the background with
-    // a solid colour)
     g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
-    float centreY = (float)getHeight() / 2.0f;
     float radius = amplitude * 200.0f;
 
     if (radius >= 0.0f) {
@@ -68,16 +62,7 @@ public:
                     radius);
     }
 
-    // Draw a representative sine wave.
-    Path wavePath;
-    wavePath.startNewSubPath(0, centreY);
-
-    for (auto x = 1.0f; x < (float)getWidth(); ++x)
-      wavePath.lineTo(x, centreY + amplitude * (float)getHeight() * 2.0f *
-                                       std::sin(x * frequency * 0.0001f));
-
-    g.setColour(getLookAndFeel().findColour(Slider::thumbColourId));
-    g.strokePath(wavePath, PathStrokeType(2.0f));
+    g.drawSingleLineText(String::formatted("Freq: %0.1f", frequency), 50, 100);
   }
 
   // Mouse handling..
@@ -106,7 +91,6 @@ public:
   }
 
 private:
-  //==============================================================================
   float phase = 0.0f;
   float phaseDelta = 0.0f;
   float frequency = 5000.0f;
