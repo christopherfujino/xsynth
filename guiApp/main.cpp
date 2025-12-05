@@ -3,6 +3,10 @@
 class AudioAppDemo final : public AudioAppComponent {
 public:
   AudioAppDemo() {
+    levelSlider.setRange(0.0, 0.25);
+    levelSlider.setTextBoxStyle(Slider::TextBoxRight, false, 100, 20);
+    //addAndMakeVisible(cButton);
+    addAndMakeVisible(levelSlider);
     setAudioChannels(0, 2);
     setSize(800, 600);
   }
@@ -13,6 +17,8 @@ public:
                      double newSampleRate) override {
     sampleRate = newSampleRate;
     expectedSamplesPerBlock = samplesPerBlockExpected;
+    phaseDelta = (float)(MathConstants<double>::twoPi * frequency / sampleRate);
+    amplitude = 0.05f;
   }
 
   void releaseResources() override {
@@ -43,23 +49,6 @@ public:
     }
   }
 
-  void paint(Graphics &g) override {
-    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
-
-    float radius = amplitude * 200.0f;
-
-    if (radius >= 0.0f) {
-      // Draw an ellipse based on the mouse position and audio volume
-      g.setColour(Colours::lightgreen);
-
-      g.fillEllipse(jmax(0.0f, lastMousePosition.x) - radius / 2.0f,
-                    jmax(0.0f, lastMousePosition.y) - radius / 2.0f, radius,
-                    radius);
-    }
-
-    g.drawSingleLineText(String::formatted("Freq: %0.1f", frequency), 50, 100);
-  }
-
   // Mouse handling..
   void mouseDown(const MouseEvent &e) override { mouseDrag(e); }
 
@@ -71,11 +60,12 @@ public:
 
     phaseDelta = (float)(MathConstants<double>::twoPi * frequency / sampleRate);
 
+    std::printf("Freq = %f Amp = %f\n", frequency, amplitude);
     repaint();
   }
 
   void mouseUp(const MouseEvent &) override {
-    amplitude = 0.0f;
+    //amplitude = 0.0f;
     repaint();
   }
 
@@ -83,17 +73,20 @@ public:
     // This is called when the component is resized.
     // If you add any child components, this is where you should
     // update their positions.
+    levelSlider.setBounds(100, 10, getWidth() - 110, 20);
   }
 
 private:
   float phase = 0.0f;
+  float frequency = 440.0f;
   float phaseDelta = 0.0f;
-  float frequency = 5000.0f;
-  float amplitude = 0.2f;
+  float amplitude;
 
   double sampleRate = 0.0;
   int expectedSamplesPerBlock = 0;
   Point<float> lastMousePosition;
+  Slider levelSlider;
+  //Button cButton;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioAppDemo)
 };
