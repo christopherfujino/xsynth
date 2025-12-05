@@ -2,12 +2,7 @@
 
 class AudioAppDemo final : public AudioAppComponent {
 public:
-  //==============================================================================
-  AudioAppDemo()
-#ifdef JUCE_DEMO_RUNNER
-      : AudioAppComponent(getSharedAudioDeviceManager(0, 2))
-#endif
-  {
+  AudioAppDemo() {
     setAudioChannels(0, 2);
     setSize(800, 600);
   }
@@ -18,6 +13,11 @@ public:
                      double newSampleRate) override {
     sampleRate = newSampleRate;
     expectedSamplesPerBlock = samplesPerBlockExpected;
+  }
+
+  void releaseResources() override {
+    // This gets automatically called when audio device parameters change
+    // or device is restarted.
   }
 
   /*  This method generates the actual audio samples.
@@ -43,11 +43,6 @@ public:
     }
   }
 
-  void releaseResources() override {
-    // This gets automatically called when audio device parameters change
-    // or device is restarted.
-  }
-
   void paint(Graphics &g) override {
     g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
@@ -71,7 +66,7 @@ public:
   void mouseDrag(const MouseEvent &e) override {
     lastMousePosition = e.position;
 
-    frequency = (float)(getHeight() - e.y) * 10.0f;
+    frequency = (float)(getHeight() - e.y) * 2.0f;
     amplitude = jmin(0.9f, 0.2f * e.position.x / (float)getWidth());
 
     phaseDelta = (float)(MathConstants<double>::twoPi * frequency / sampleRate);
