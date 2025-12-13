@@ -5,7 +5,7 @@ public:
   AudioAppDemo() {
     levelSlider.setRange(0.0, 0.25);
     levelSlider.setTextBoxStyle(Slider::TextBoxRight, false, 100, 20);
-    //addAndMakeVisible(cButton);
+    // addAndMakeVisible(cButton);
     addAndMakeVisible(levelSlider);
     setAudioChannels(0, 2);
     setSize(800, 600);
@@ -65,7 +65,7 @@ public:
   }
 
   void mouseUp(const MouseEvent &) override {
-    //amplitude = 0.0f;
+    // amplitude = 0.0f;
     repaint();
   }
 
@@ -86,7 +86,7 @@ private:
   int expectedSamplesPerBlock = 0;
   Point<float> lastMousePosition;
   Slider levelSlider;
-  //Button cButton;
+  // Button cButton;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioAppDemo)
 };
