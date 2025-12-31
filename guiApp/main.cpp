@@ -18,7 +18,6 @@ public:
     amplitudeSlider.setRange(0.0f, 1.0f);
     amplitudeSlider.setSliderStyle(juce::Slider::LinearVertical);
     amplitudeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 100, 100);
-    //amplitudeSlider.setTextValueSuffix("");
     amplitudeSlider.setValue(0.05f);
     amplitudeSlider.addListener(this);
 
@@ -87,7 +86,7 @@ public:
 
   void mouseUp(const MouseEvent &) override {
     // amplitude = 0.0f;
-    //repaint();
+    // repaint();
   }
 
   void resized() override {
