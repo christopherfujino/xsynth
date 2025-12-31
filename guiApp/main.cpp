@@ -9,7 +9,8 @@ public:
     setSize(800, 600);
 
     levelSlider.setRange(Pitches::nameA0, Pitches::nameB8);
-    levelSlider.setTextBoxStyle(Slider::TextBoxRight, false, 100, 20);
+    levelSlider.setSliderStyle(juce::Slider::LinearVertical);
+    levelSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 100, 100);
     levelSlider.setTextValueSuffix(" HZ");
     levelSlider.setValue(440);
     levelSlider.addListener(this);
@@ -18,7 +19,6 @@ public:
 
   ~AudioAppDemo() override { shutdownAudio(); }
   void sliderValueChanged(juce::Slider *slider) override {
-    std::printf("Trigger!\n");
     if (slider == &levelSlider) {
       frequency = slider->getValue();
 
@@ -76,14 +76,14 @@ public:
 
   void mouseUp(const MouseEvent &) override {
     // amplitude = 0.0f;
-    repaint();
+    //repaint();
   }
 
   void resized() override {
     // This is called when the component is resized.
     // If you add any child components, this is where you should
     // update their positions.
-    levelSlider.setBounds(100, 10, getWidth() - 110, 20);
+    levelSlider.setBounds(100, 50, 40, getHeight() - 100);
   }
 
 private:
