@@ -14,7 +14,16 @@ public:
     levelSlider.setTextValueSuffix(" HZ");
     levelSlider.setValue(440);
     levelSlider.addListener(this);
+
+    amplitudeSlider.setRange(0.0f, 1.0f);
+    amplitudeSlider.setSliderStyle(juce::Slider::LinearVertical);
+    amplitudeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 100, 100);
+    //amplitudeSlider.setTextValueSuffix("");
+    amplitudeSlider.setValue(0.05f);
+    amplitudeSlider.addListener(this);
+
     addAndMakeVisible(levelSlider);
+    addAndMakeVisible(amplitudeSlider);
   }
 
   ~AudioAppDemo() override { shutdownAudio(); }
@@ -27,8 +36,10 @@ public:
 
       std::printf("Freq = %f Amp = %f\n", frequency, amplitude);
       repaint();
-    } else {
+    } else if (slider == &amplitudeSlider) {
+      amplitude = slider->getValue();
       // amplitude = jmin(0.9f, 0.2f * e.position.x / (float)getWidth());
+    } else {
       throw std::runtime_error("Yikes");
     }
   }
@@ -84,6 +95,7 @@ public:
     // If you add any child components, this is where you should
     // update their positions.
     levelSlider.setBounds(100, 50, 40, getHeight() - 100);
+    amplitudeSlider.setBounds(200, 50, 40, getHeight() - 100);
   }
 
 private:
@@ -98,6 +110,7 @@ private:
   // Button cButton;
 
   Slider levelSlider;
+  Slider amplitudeSlider;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioAppDemo)
 };
