@@ -7,6 +7,8 @@ project(guiApp
 # Generate a compile_commands.json file
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+add_compile_options(-Wall -Werror -Wpedantic -Wextra)
+
 add_subdirectory(
   # This is relative to CMakeLists.txt
   ../ignore/JUCE

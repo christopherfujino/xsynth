@@ -1,17 +1,37 @@
 #include <JuceHeader.h>
 
-class AudioAppDemo final : public AudioAppComponent {
+#include "pitches.h"
+
+class AudioAppDemo final : public AudioAppComponent, juce::Slider::Listener {
 public:
   AudioAppDemo() {
-    levelSlider.setRange(0.0, 0.25);
-    levelSlider.setTextBoxStyle(Slider::TextBoxRight, false, 100, 20);
-    // addAndMakeVisible(cButton);
-    addAndMakeVisible(levelSlider);
     setAudioChannels(0, 2);
     setSize(800, 600);
+
+    levelSlider.setRange(Pitches::nameA0, Pitches::nameB8);
+    levelSlider.setTextBoxStyle(Slider::TextBoxRight, false, 100, 20);
+    levelSlider.setTextValueSuffix(" HZ");
+    levelSlider.setValue(440);
+    levelSlider.addListener(this);
+    addAndMakeVisible(levelSlider);
   }
 
   ~AudioAppDemo() override { shutdownAudio(); }
+  void sliderValueChanged(juce::Slider *slider) override {
+    std::printf("Trigger!\n");
+    if (slider == &levelSlider) {
+      frequency = slider->getValue();
+
+      phaseDelta =
+          (float)(MathConstants<double>::twoPi * frequency / sampleRate);
+
+      std::printf("Freq = %f Amp = %f\n", frequency, amplitude);
+      repaint();
+    } else {
+      // amplitude = jmin(0.9f, 0.2f * e.position.x / (float)getWidth());
+      throw std::runtime_error("Yikes");
+    }
+  }
 
   void prepareToPlay(int samplesPerBlockExpected,
                      double newSampleRate) override {
@@ -50,19 +70,9 @@ public:
   }
 
   // Mouse handling..
-  void mouseDown(const MouseEvent &e) override { mouseDrag(e); }
+  void mouseDown(const MouseEvent &) override {}
 
-  void mouseDrag(const MouseEvent &e) override {
-    lastMousePosition = e.position;
-
-    frequency = (float)(getHeight() - e.y) * 2.0f;
-    amplitude = jmin(0.9f, 0.2f * e.position.x / (float)getWidth());
-
-    phaseDelta = (float)(MathConstants<double>::twoPi * frequency / sampleRate);
-
-    std::printf("Freq = %f Amp = %f\n", frequency, amplitude);
-    repaint();
-  }
+  void mouseDrag(const MouseEvent &) override {}
 
   void mouseUp(const MouseEvent &) override {
     // amplitude = 0.0f;
@@ -85,8 +95,9 @@ private:
   double sampleRate = 0.0;
   int expectedSamplesPerBlock = 0;
   Point<float> lastMousePosition;
-  Slider levelSlider;
   // Button cButton;
+
+  Slider levelSlider;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioAppDemo)
 };
