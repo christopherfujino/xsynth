@@ -7,7 +7,11 @@ project(guiApp
 # Generate a compile_commands.json file
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_compile_options(-Wall -Werror -Wpedantic -Wextra)
+add_compile_options(
+  -Wall
+  -Werror
+  -Wpedantic
+  -Wextra)
 
 add_subdirectory(
   # This is relative to CMakeLists.txt
@@ -20,7 +24,8 @@ add_subdirectory(
 
 juce_add_gui_app(main)
 
-target_sources(main PRIVATE main.cpp)
+target_sources(main PRIVATE
+  main.cpp)
 
 juce_generate_juce_header(main)
 

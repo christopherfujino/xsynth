@@ -1,6 +1,7 @@
 #include <JuceHeader.h>
 
 #include "pitches.h"
+#include "waveform.h"
 
 class AudioAppDemo final : public AudioAppComponent, juce::Slider::Listener {
 public:
@@ -71,7 +72,7 @@ public:
           bufferToFill.buffer->getWritePointer(chan, bufferToFill.startSample);
 
       for (int i = 0; i < bufferToFill.numSamples; ++i) {
-        channelData[i] = amplitude * std::sin(phase);
+        channelData[i] = amplitude * XSynth::square(phase);
 
         // increment the phase step for the next sample
         phase = std::fmod(phase + phaseDelta, MathConstants<float>::twoPi);
@@ -93,8 +94,10 @@ public:
     // This is called when the component is resized.
     // If you add any child components, this is where you should
     // update their positions.
-    levelSlider.setBounds(100, 50, 40, getHeight() - 100);
-    amplitudeSlider.setBounds(200, 50, 40, getHeight() - 100);
+    int width = 60;
+    int height = getHeight() - 100;
+    levelSlider.setBounds(100, 50, width, height);
+    amplitudeSlider.setBounds(200, 50, width, height);
   }
 
 private:
