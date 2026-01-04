@@ -9,26 +9,27 @@ public:
     setAudioChannels(0, 2);
     setSize(800, 600);
 
-    levelSlider.setRange(Pitches::nameA0, Pitches::nameB8);
-    levelSlider.setSliderStyle(juce::Slider::LinearVertical);
-    levelSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 100, 100);
-    levelSlider.setTextValueSuffix(" HZ");
-    levelSlider.setValue(440);
-    levelSlider.addListener(this);
+    frequencySlider.setRange(Pitches::nameA0, Pitches::nameB8);
+    frequencySlider.setSliderStyle(juce::Slider::LinearVertical);
+    frequencySlider.setTextBoxStyle(Slider::TextBoxBelow, false, 100, 100);
+    frequencySlider.setTextValueSuffix(" HZ");
+    frequencySlider.setValue(440);
+    frequencySlider.addListener(this);
 
-    amplitudeSlider.setRange(0.0f, 1.0f);
+    // Per tutorial, this should be well below 1.0
+    amplitudeSlider.setRange(0.0f, 0.25f);
     amplitudeSlider.setSliderStyle(juce::Slider::LinearVertical);
     amplitudeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 100, 100);
     amplitudeSlider.setValue(0.05f);
     amplitudeSlider.addListener(this);
 
-    addAndMakeVisible(levelSlider);
+    addAndMakeVisible(frequencySlider);
     addAndMakeVisible(amplitudeSlider);
   }
 
   ~AudioAppDemo() override { shutdownAudio(); }
   void sliderValueChanged(juce::Slider *slider) override {
-    if (slider == &levelSlider) {
+    if (slider == &frequencySlider) {
       frequency = slider->getValue();
 
       phaseDelta =
@@ -96,7 +97,7 @@ public:
     // update their positions.
     int width = 60;
     int height = getHeight() - 100;
-    levelSlider.setBounds(100, 50, width, height);
+    frequencySlider.setBounds(100, 50, width, height);
     amplitudeSlider.setBounds(200, 50, width, height);
   }
 
@@ -111,7 +112,7 @@ private:
   Point<float> lastMousePosition;
   // Button cButton;
 
-  Slider levelSlider;
+  Slider frequencySlider;
   Slider amplitudeSlider;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioAppDemo)
