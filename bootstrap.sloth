@@ -1,6 +1,6 @@
 #!/usr/bin/env sloth
 
-let buildProjucer = false
+let buildProjucer = true
 
 do {
   let os = ('uname'&!).stdout.trim()
